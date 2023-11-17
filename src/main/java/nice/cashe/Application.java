@@ -1,4 +1,4 @@
-package nice.cash;
+package nice.cashe;
 
 public class Application {
     public static void main(String[] args) {

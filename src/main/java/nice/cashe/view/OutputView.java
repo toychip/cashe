@@ -1,4 +1,4 @@
-package nice.cash.view;
+package nice.cashe.view;
 
 public class OutputView {
 

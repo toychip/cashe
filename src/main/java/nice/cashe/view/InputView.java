@@ -1,10 +1,10 @@
-package nice.cash.view;
+package nice.cashe.view;
 
 import java.util.Scanner;
 
 public class InputView {
-    public int read() {
+    public String read() {
         Scanner input = new Scanner(System.in);
-        return input.nextInt();
+        return input.next();
     }
 }
