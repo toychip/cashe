@@ -1,4 +1,4 @@
-package nice.cashe.domain;
+package nice.cashe.domain.cashe_component;
 
 import java.time.LocalDateTime;
 
