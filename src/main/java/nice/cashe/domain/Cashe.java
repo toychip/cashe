@@ -3,53 +3,38 @@ package nice.cashe.domain;
 import java.util.concurrent.ConcurrentHashMap;
 import nice.cashe.domain.cashe_component.UntilTime;
 import nice.cashe.domain.cashe_component.repository_component.Key;
-import nice.cashe.domain.cashe_component.repository_component.Target;
+import nice.cashe.domain.cashe_component.repository_component.Targets;
 
 public class Cashe {
 
-    private static final ConcurrentHashMap<Key, Target> repository = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<Key, Targets> repository = new ConcurrentHashMap<>();
     private final UntilTime untilTime;
 
-    private Cashe(String key, Object target, String userTime) {
-        createRepository(key, target);
+    private Cashe(String key, int count, String userTime) {
+        createRepository(key, count);
         this.untilTime = createTime(userTime);
     }
 
-    private Cashe(String key, Object target) {
-        createRepository(key, target);
-        this.untilTime = createTime();
+    public static Cashe of(String key, int count, String localDateTime) {
+        return new Cashe(key, count, localDateTime);
     }
 
-    public static Cashe of(String key, Object target) {
-        return new Cashe(key, target);
+    private void createRepository(String inputKey, int count) {
+        Key key = initKey(inputKey);
+        Targets target = initTarget(count);
+        repository.put(key, target);
     }
 
-    public static Cashe of(String key, Object target, String localDateTime) {
-        return new Cashe(key, target, localDateTime);
-    }
-
-    private void createRepository(String inputKey, Object inputTarget) {
-        Key key = getKey(inputKey);
-        Target value = getTarget(inputTarget);
-        repository.put(key, value);
-    }
-
-    private Key getKey(String inputKey) {
+    private Key initKey(String inputKey) {
         return new Key(inputKey);
     }
 
-    private Target getTarget(Object inputTarget) {
-        return new Target(inputTarget);
+    private Targets initTarget(int count) {
+        return new Targets(count);
     }
 
     private UntilTime createTime(String userTime) {
-        return null;
+        return new UntilTime(userTime);
     }
-
-    // default
-    private UntilTime createTime() {
-        return null;
-    }
-
 
 }
