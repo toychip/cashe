@@ -14,33 +14,56 @@ public class Targets {
     private final List<Target> targets;
     private final UntilTime untilTime;
 
-    public Targets(Value value, String userInputTime) {
-        targets = toTargets(value);
-        untilTime = toUntilTile(userInputTime);
+    // 초기화용
+    private Targets(Value value, String userInputTime) {
+        targets = initTargets(value);
+        untilTime = toUntilTime(userInputTime);
         logger.info(targets + "객체들" + untilTime + "까지 유효");
     }
 
-    private List<Target> toTargets(Value value) {
+    // 데이터 값 삽입용
+    private Targets(List<Target> targets, UntilTime untilTime) {
+        this.targets = targets;
+        this.untilTime = untilTime;
+    }
+
+    // 초기화용
+    public static Targets initOf(Value value, String userInputTime) {
+        return new Targets(value, userInputTime);
+    }
+
+    // 데이터 값 삽입용
+    public static Targets saveOf(List<Target> targets, UntilTime untilTime) {
+        return new Targets(targets, untilTime);
+    }
+
+    private List<Target> initTargets(Value value) {
         return IntStream.range(0, value.getCount())
                 .mapToObj(i -> createTarget())
                 .collect(Collectors.toList());
     }
 
-    private UntilTime toUntilTile(String userInputTime) {
+    private UntilTime toUntilTime(String userInputTime) {
         return new UntilTime(userInputTime);
     }
 
     private Target createTarget() {
-        return new Target();
+        return new Target(new Object());
     }
 
     public List<Target> getTargets() {
         return targets;
     }
 
-    public LocalDateTime getUntilTime() {
+    public LocalDateTime getUntilValue() {
         return untilTime.getTimeValue();
     }
+
+    public UntilTime getUntilTime() {
+        return untilTime;
+    }
+
+
 
     @Override
     public String toString() {

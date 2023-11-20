@@ -5,8 +5,8 @@ import java.util.Objects;
 public class Target {
     private final Object data;
 
-    public Target() {
-        this.data = createObject();
+    public Target(Object object) {
+        this.data = object;
     }
 
     private Object createObject() {
