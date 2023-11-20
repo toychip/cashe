@@ -1,4 +1,4 @@
-package nice.cashe.domain.cashe_component;
+package nice.cashe.domain.cashe_component.repository_component;
 
 import static nice.cashe.domain.ApplicationConstants.DATE_PATTERN;
 import static nice.cashe.domain.ApplicationConstants.DATE_REGEX;
