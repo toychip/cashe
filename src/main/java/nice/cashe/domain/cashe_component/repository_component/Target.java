@@ -34,4 +34,8 @@ public class Target {
     public String toString() {
         return data.toString();
     }
+
+    public Object getData() {
+        return data;
+    }
 }
