@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import nice.cashe.domain.cashe_component.Targets;
 import nice.cashe.domain.cashe_component.Value;
@@ -18,6 +19,7 @@ import nice.cashe.domain.exception.InputNotExistsKeyException;
 public class Cashe {
 
     private static final ConcurrentHashMap<Key, Targets> repository = new ConcurrentHashMap<>();
+    private static final Logger logger = Logger.getLogger(Cashe.class.getName());
     private static final Timer timer = new Timer();
 
     static {
@@ -44,13 +46,27 @@ public class Cashe {
     }
 
     private Targets getTargets(Key key) {
-        return Optional.ofNullable(repository.get(key))
+
+        Targets targets = Optional.ofNullable(repository.get(key))
                 .orElseThrow(InputNotExistsKeyException::new);
+        UntilTime untilTime = getUntilTime(targets);
+
+        printLog(targets, untilTime);
+        return targets;
     }
 
     public List<Targets> getAll() {
-        return repository.values().stream()
-                .collect(Collectors.toList());
+        List<Targets> allTargets = repository.values().stream().collect(Collectors.toList());
+        allTargets.forEach(targets -> {
+            UntilTime untilTime = targets.getUntilTime();
+            printLog(targets, untilTime);
+        });
+
+        return allTargets;
+    }
+
+    private void printLog(Targets targets, UntilTime untilTime) {
+        logger.info(targets + "객체의 유효기간은 " + untilTime + "까지입니다.");
     }
 
     public void put(String inputKey, Object... userTargets) {
@@ -61,15 +77,16 @@ public class Cashe {
         // 키 생성
         Key key = initKey(inputKey);
         // 초기화 되어있는 시간 추출
-        UntilTime untilTime = repository.get(key).getUntilTime();
+        UntilTime untilTime = getUntilTime(repository.get(key));
         // 유저가 입력한 객체를 컬렉션으로 변환
-        List<Target> targets = getTargets(userTargets);
+        List<Target> targets = createTargets(userTargets);
         // List<객체>와 유효 시간을 Targets으로 생성
+
         Targets savedTarget = Targets.saveOf(targets, untilTime);
         repository.put(key, savedTarget);
     }
 
-    private List<Target> getTargets(Object[] userTargets) {
+    private List<Target> createTargets(Object... userTargets) {
         return Arrays.stream(userTargets)
                 .map(Target::new)
                 .collect(Collectors.toList());
@@ -83,8 +100,16 @@ public class Cashe {
     private void initData(String inputKey, String inputValue, String userInputTime) {
         Key key = initKey(inputKey);
         Value value = initValue(inputValue);
-        Targets target = initTargets(value, userInputTime);
-        repository.put(key, target);
+        Targets targets = initTargets(value, userInputTime);
+
+        UntilTime untilTime = getUntilTime(targets);
+        printLog(targets, untilTime);
+        logger.info("----- 초기화합니다 -----");
+        repository.put(key, targets);
+    }
+
+    private UntilTime getUntilTime(Targets targets) {
+        return targets.getUntilTime();
     }
 
     private Key initKey(String inputKey) {
@@ -101,6 +126,10 @@ public class Cashe {
 
     public void remove(String userInputKey) {
         Key key = initKey(userInputKey);
+        Targets targets = repository.get(key);
+        UntilTime untilTime = getUntilTime(targets);
+        printLog(targets, untilTime);
+        logger.info("----- 삭제합니다 -----");
         repository.remove(key);
     }
 }

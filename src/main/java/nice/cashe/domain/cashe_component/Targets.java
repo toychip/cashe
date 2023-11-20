@@ -10,7 +10,6 @@ import nice.cashe.domain.cashe_component.repository_component.Target;
 import nice.cashe.domain.cashe_component.repository_component.UntilTime;
 
 public class Targets {
-    private static final Logger logger = Logger.getLogger(Cashe.class.getName());
     private final List<Target> targets;
     private final UntilTime untilTime;
 
@@ -18,7 +17,6 @@ public class Targets {
     private Targets(Value value, String userInputTime) {
         targets = initTargets(value);
         untilTime = toUntilTime(userInputTime);
-        logger.info(targets + "객체들" + untilTime + "까지 유효");
     }
 
     // 데이터 값 삽입용
@@ -62,8 +60,6 @@ public class Targets {
     public UntilTime getUntilTime() {
         return untilTime;
     }
-
-
 
     @Override
     public String toString() {
