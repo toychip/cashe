@@ -63,6 +63,8 @@ public class Targets {
 
     @Override
     public String toString() {
-        return targets.stream().map(target -> target.toString() + ", ").toString();
+        return targets.stream()
+                .map(Target::toString)
+                .collect(Collectors.joining(", "));
     }
 }

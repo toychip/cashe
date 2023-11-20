@@ -33,6 +33,7 @@ public class Cashe {
     }
 
     public Cashe() {
+        logger.info("올바른 결과를 보려면 귀하의 객체에 @toString이 알맞게 재정의되어있어야합니다.");
     }
 
     private static void removeExpiredEntries() {
@@ -46,7 +47,6 @@ public class Cashe {
     }
 
     private Targets getTargets(Key key) {
-
         Targets targets = Optional.ofNullable(repository.get(key))
                 .orElseThrow(InputNotExistsKeyException::new);
         UntilTime untilTime = getUntilTime(targets);
@@ -59,14 +59,16 @@ public class Cashe {
         List<Targets> allTargets = repository.values().stream().collect(Collectors.toList());
         allTargets.forEach(targets -> {
             UntilTime untilTime = targets.getUntilTime();
+            logger.info("----- 전체 조회중...---");
             printLog(targets, untilTime);
+            logger.info("----- 전체 조회끝 -----");
         });
 
         return allTargets;
     }
 
     private void printLog(Targets targets, UntilTime untilTime) {
-        logger.info(targets + "객체의 유효기간은 " + untilTime + "까지입니다.");
+        logger.info(targets.toString() + " 객체의 유효기간은 " + untilTime + "까지입니다.");
     }
 
     public void put(String inputKey, Object... userTargets) {
@@ -83,7 +85,10 @@ public class Cashe {
         // List<객체>와 유효 시간을 Targets으로 생성
 
         Targets savedTarget = Targets.saveOf(targets, untilTime);
+        logger.info("----- 값을 삽입중...---");
         repository.put(key, savedTarget);
+        logger.info("----- 값 삽입 끝. -----");
+        printLog(savedTarget, untilTime);
     }
 
     private List<Target> createTargets(Object... userTargets) {
@@ -101,11 +106,11 @@ public class Cashe {
         Key key = initKey(inputKey);
         Value value = initValue(inputValue);
         Targets targets = initTargets(value, userInputTime);
-
         UntilTime untilTime = getUntilTime(targets);
         printLog(targets, untilTime);
-        logger.info("----- 초기화합니다 -----");
+        logger.info("----- 초기화 중...---");
         repository.put(key, targets);
+        logger.info("----- 초기화 끝 -----");
     }
 
     private UntilTime getUntilTime(Targets targets) {

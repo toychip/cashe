@@ -59,4 +59,9 @@ public class UntilTime {
     public LocalDateTime getTimeValue() {
         return timeValue;
     }
+
+    @Override
+    public String toString() {
+        return timeValue.toString();
+    }
 }

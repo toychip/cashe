@@ -29,4 +29,9 @@ public class Target {
     public int hashCode() {
         return Objects.hash(data);
     }
+
+    @Override
+    public String toString() {
+        return data.toString();
+    }
 }
