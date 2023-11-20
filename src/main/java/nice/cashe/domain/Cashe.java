@@ -1,8 +1,10 @@
 package nice.cashe.domain;
 
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import nice.cashe.domain.cashe_component.Targets;
 import nice.cashe.domain.cashe_component.repository_component.Key;
+import nice.cashe.domain.exception.InputNotExistsKeyException;
 
 public class Cashe {
 
@@ -28,5 +30,15 @@ public class Cashe {
 
     private Targets initTarget(int count, String userInputTime) {
         return new Targets(count, userInputTime);
+    }
+
+    public Targets get(String inputKey) {
+        Key key = new Key(inputKey);
+        return getTargets(key);
+    }
+
+    private Targets getTargets(Key key) {
+        return Optional.ofNullable(repository.get(key))
+                .orElseThrow(InputNotExistsKeyException::new);
     }
 }
