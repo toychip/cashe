@@ -6,21 +6,15 @@ import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import nice.cashe.domain.cashe_component.Targets;
+import nice.cashe.domain.cashe_component.Value;
 import nice.cashe.domain.cashe_component.repository_component.Key;
 import nice.cashe.domain.exception.InputNotExistsKeyException;
 
 public class Cashe {
 
     private static final ConcurrentHashMap<Key, Targets> repository = new ConcurrentHashMap<>();
-
-    public Cashe() {
-    }
-
     private static final Timer timer = new Timer();
 
     static {
@@ -31,6 +25,9 @@ public class Cashe {
                 removeExpiredEntries();
             }
         }, 0, 10000); // 0초 지연, 10초 간격
+    }
+
+    public Cashe() {
     }
 
     private static void removeExpiredEntries() {
@@ -53,13 +50,13 @@ public class Cashe {
                 .collect(Collectors.toList());
     }
 
-    public void put(String inputKey, int count, String userInputTime) {
-        saveData(inputKey, count, userInputTime);
+    public void put(String inputKey, Value value, String userInputTime) {
+        saveData(inputKey, value, userInputTime);
     }
 
-    private void saveData(String inputKey, int count, String userInputTime) {
+    private void saveData(String inputKey, Value value, String userInputTime) {
         Key key = initKey(inputKey);
-        Targets target = initTarget(count, userInputTime);
+        Targets target = initTarget(value, userInputTime);
         repository.put(key, target);
     }
 
@@ -67,8 +64,8 @@ public class Cashe {
         return new Key(inputKey);
     }
 
-    private Targets initTarget(int count, String userInputTime) {
-        return new Targets(count, userInputTime);
+    private Targets initTarget(Value value, String userInputTime) {
+        return new Targets(value, userInputTime);
     }
 
     public void remove(String userInputKey) {
