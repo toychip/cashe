@@ -1,8 +1,10 @@
 package nice.cashe.domain.exception;
 
+import static nice.cashe.domain.ApplicationConstants.INPUT_EMPTY_MESSAGE;
+
 public class InputEmptyException extends IllegalArgumentException{
-    private static final String MESSAGE = "[ERROR] 인자가 비어있습니다.";
+
     public InputEmptyException() {
-        super(MESSAGE);
+        super(INPUT_EMPTY_MESSAGE);
     }
 }

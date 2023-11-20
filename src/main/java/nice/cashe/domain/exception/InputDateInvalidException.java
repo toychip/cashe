@@ -1,8 +1,10 @@
 package nice.cashe.domain.exception;
 
+import static nice.cashe.domain.ApplicationConstants.INVALID_FORMAT_MESSAGE;
+
 public class InputDateInvalidException extends IllegalArgumentException{
-    private static final String MESSAGE = "[ERROR] 인자 날짜가 포멧에 맞지 않습니다.";
+
     public InputDateInvalidException() {
-        super(MESSAGE);
+        super(INVALID_FORMAT_MESSAGE);
     }
 }
