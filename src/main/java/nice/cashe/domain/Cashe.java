@@ -1,20 +1,23 @@
 package nice.cashe.domain;
 
-import nice.cashe.domain.cashe_component.Repository;
+import java.util.concurrent.ConcurrentHashMap;
 import nice.cashe.domain.cashe_component.UntilTime;
+import nice.cashe.domain.cashe_component.repository_component.Key;
+import nice.cashe.domain.cashe_component.repository_component.Target;
 
 public class Cashe {
-    private final Repository repository;
+
+    private static final ConcurrentHashMap<Key, Target> repository = new ConcurrentHashMap<>();
     private final UntilTime untilTime;
 
-    public Cashe(String key, Object target, String userTime) {
-        this.repository = createRepository(key, target);
+    private Cashe(String key, Object target, String userTime) {
+        createRepository(key, target);
         this.untilTime = createTime(userTime);
     }
 
-    public Cashe(String key, Object target) {
-        this.repository = createRepository(key, target);
-        this.untilTime = defaultTime();
+    private Cashe(String key, Object target) {
+        createRepository(key, target);
+        this.untilTime = createTime();
     }
 
     public static Cashe of(String key, Object target) {
@@ -25,15 +28,26 @@ public class Cashe {
         return new Cashe(key, target, localDateTime);
     }
 
-    private Repository createRepository(String key, Object target) {
-        return null;
+    private void createRepository(String inputKey, Object inputTarget) {
+        Key key = getKey(inputKey);
+        Target value = getTarget(inputTarget);
+        repository.put(key, value);
+    }
+
+    private Key getKey(String inputKey) {
+        return new Key(inputKey);
+    }
+
+    private Target getTarget(Object inputTarget) {
+        return new Target(inputTarget);
     }
 
     private UntilTime createTime(String userTime) {
         return null;
     }
 
-    private UntilTime defaultTime() {
+    // default
+    private UntilTime createTime() {
         return null;
     }
 
