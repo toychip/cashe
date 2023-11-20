@@ -1,5 +1,8 @@
 package nice.cashe.domain.cashe_component;
 
+import static nice.cashe.domain.ApplicationConstants.DATE_PATTERN;
+import static nice.cashe.domain.ApplicationConstants.DATE_REGEX;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -28,16 +31,17 @@ public class UntilTime {
     }
 
     private void validRule(String userTime) {
-        boolean isMatchRule = userTime.matches("\\d{4}\\.\\d{2}\\.\\d{2} \\d{2}:\\d{2}");
+        boolean isMatchRule = userTime.matches(DATE_REGEX);
         if (!isMatchRule) {
             throw new InputDateInvalidException();
         }
     }
 
     /**
-     * 2000.04.27 21:30 형식으로 입력 들어옴
-     * @param userTime
-     * @return LocalDateTime
+     * 지정된 문자열 형식의 시간을 LocalDateTime 객체로 변환
+     * 입력 형식은 "2000.04.27 21:30"
+     * @param validatedDate 변환할 시간을 나타내는 문자열. 형식은 "yyyy.MM.dd HH:mm"이어야 함
+     * @return 변환된 LocalDateTime 객체.
      */
     private LocalDateTime createUserTime(String validatedDate) {
         try {
@@ -49,7 +53,7 @@ public class UntilTime {
     }
 
     private DateTimeFormatter getDateTimeFormatter() {
-        return DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
+        return DateTimeFormatter.ofPattern(DATE_PATTERN);
     }
 
     public LocalDateTime getTimeValue() {
