@@ -1,6 +1,6 @@
-package nice.cashe.domain.exception;
+package nice.cache.domain.exception;
 
-import static nice.cashe.domain.ApplicationConstants.NOT_EXISTS_MESSAGE;
+import static nice.cache.domain.ApplicationConstants.NOT_EXISTS_MESSAGE;
 
 public class InputNotExistsKeyException extends IllegalArgumentException{
 

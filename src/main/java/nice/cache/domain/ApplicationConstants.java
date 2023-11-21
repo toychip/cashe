@@ -1,6 +1,6 @@
-package nice.cashe.domain;
+package nice.cache.domain;
 
-import nice.cashe.domain.exception.InvalidConstantException;
+import nice.cache.domain.exception.InvalidConstantException;
 
 public final class ApplicationConstants {
 

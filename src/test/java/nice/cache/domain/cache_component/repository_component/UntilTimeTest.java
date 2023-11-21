@@ -1,12 +1,12 @@
-package nice.cashe.domain.cashe_component.repository_component;
+package nice.cache.domain.cache_component.repository_component;
 
 
-import static nice.cashe.domain.ApplicationConstants.INVALID_FORMAT_MESSAGE;
+import static nice.cache.domain.ApplicationConstants.INVALID_FORMAT_MESSAGE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDateTime;
-import nice.cashe.domain.exception.InputDateInvalidException;
+import nice.cache.domain.exception.InputDateInvalidException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;

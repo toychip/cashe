@@ -1,6 +1,6 @@
-package nice.cashe.domain.exception;
+package nice.cache.domain.exception;
 
-import static nice.cashe.domain.ApplicationConstants.CANT_INSTANCE_MESSAGE;
+import static nice.cache.domain.ApplicationConstants.CANT_INSTANCE_MESSAGE;
 
 public class InvalidConstantException extends IllegalArgumentException{
 

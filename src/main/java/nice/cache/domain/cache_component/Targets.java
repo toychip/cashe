@@ -1,13 +1,11 @@
-package nice.cashe.domain.cashe_component;
+package nice.cache.domain.cache_component;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import nice.cashe.domain.Cashe;
-import nice.cashe.domain.cashe_component.repository_component.Target;
-import nice.cashe.domain.cashe_component.repository_component.UntilTime;
+import nice.cache.domain.cache_component.repository_component.Target;
+import nice.cache.domain.cache_component.repository_component.UntilTime;
 
 public class Targets {
     private final List<Target> targets;

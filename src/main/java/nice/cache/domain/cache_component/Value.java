@@ -1,4 +1,4 @@
-package nice.cashe.domain.cashe_component;
+package nice.cache.domain.cache_component;
 
 public class Value {
     private final int count;

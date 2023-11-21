@@ -1,4 +1,4 @@
-package nice.cashe.domain;
+package nice.cache.domain;
 
 public class Exdata {
     private int age;

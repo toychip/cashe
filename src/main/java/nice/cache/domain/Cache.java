@@ -1,4 +1,4 @@
-package nice.cashe.domain;
+package nice.cache.domain;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -9,17 +9,17 @@ import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import nice.cashe.domain.cashe_component.Targets;
-import nice.cashe.domain.cashe_component.Value;
-import nice.cashe.domain.cashe_component.repository_component.Key;
-import nice.cashe.domain.cashe_component.repository_component.Target;
-import nice.cashe.domain.cashe_component.repository_component.UntilTime;
-import nice.cashe.domain.exception.InputNotExistsKeyException;
+import nice.cache.domain.cache_component.Targets;
+import nice.cache.domain.cache_component.Value;
+import nice.cache.domain.cache_component.repository_component.Key;
+import nice.cache.domain.cache_component.repository_component.Target;
+import nice.cache.domain.cache_component.repository_component.UntilTime;
+import nice.cache.domain.exception.InputNotExistsKeyException;
 
-public class Cashe {
+public class Cache {
 
     private static final ConcurrentHashMap<Key, Targets> repository = new ConcurrentHashMap<>();
-    private static final Logger logger = Logger.getLogger(Cashe.class.getName());
+    private static final Logger logger = Logger.getLogger(Cache.class.getName());
     private static final Timer timer = new Timer();
 
     static {
@@ -32,7 +32,7 @@ public class Cashe {
         }, 0, 10000); // 0초 지연, 10초 간격
     }
 
-    public Cashe() {
+    public Cache() {
         logger.info("올바른 결과를 보려면 귀하의 객체에 @toString이 알맞게 재정의되어있어야합니다.");
     }
 
@@ -73,6 +73,10 @@ public class Cashe {
 
     public void put(String inputKey, Object... userTargets) {
         saveData(inputKey, userTargets);
+        // todo if(size를 초과했을 경우)
+//          Targets targets = get(inputKey);
+//        if (targets.getTargets().size() >= userTargets.length) {
+//        }
     }
 
     private void saveData(String inputKey, Object... userTargets) {
@@ -107,6 +111,7 @@ public class Cashe {
         Value value = initValue(inputValue);
         Targets targets = initTargets(value, userInputTime);
         UntilTime untilTime = getUntilTime(targets);
+
         printLog(targets, untilTime);
         logger.info("----- 초기화 중...---");
         repository.put(key, targets);

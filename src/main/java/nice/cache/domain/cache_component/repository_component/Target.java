@@ -1,4 +1,4 @@
-package nice.cashe.domain.cashe_component.repository_component;
+package nice.cache.domain.cache_component.repository_component;
 
 import java.util.Objects;
 

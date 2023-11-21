@@ -1,4 +1,4 @@
-package nice.cashe.view;
+package nice.cache.view;
 
 import java.util.Scanner;
 

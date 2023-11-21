@@ -1,6 +1,6 @@
-package nice.cashe.domain.exception;
+package nice.cache.domain.exception;
 
-import static nice.cashe.domain.ApplicationConstants.INPUT_EMPTY_MESSAGE;
+import static nice.cache.domain.ApplicationConstants.INPUT_EMPTY_MESSAGE;
 
 public class InputEmptyException extends IllegalArgumentException{
 

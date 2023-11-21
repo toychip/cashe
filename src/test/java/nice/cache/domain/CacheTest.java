@@ -1,34 +1,33 @@
-package nice.cashe.domain;
+package nice.cache.domain;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import nice.cashe.domain.cashe_component.Targets;
-import nice.cashe.domain.cashe_component.repository_component.Target;
-import nice.cashe.domain.cashe_component.repository_component.UntilTime;
-import org.junit.jupiter.api.Assertions;
+import nice.cache.domain.cache_component.Targets;
+import nice.cache.domain.cache_component.repository_component.Target;
+import nice.cache.domain.cache_component.repository_component.UntilTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class CasheTest {
+class CacheTest {
 
-    private Cashe cashe;
+    private Cache cache;
     String key = "kettttt";
     @BeforeEach
     void init() {
-        cashe = new Cashe();
+        cache = new Cache();
 
-        cashe.put(key, "3", "2023.11.20 16:41");
+        cache.put(key, "3", "2023.11.20 16:41");
         Exdata person1 = new Exdata(24, "임준형");
         Exdata person2 = new Exdata(25, "김경민");
-        cashe.put(key, person1, person2);
-        cashe.getAll();
+        cache.put(key, person1, person2);
+        cache.getAll();
     }
 
     @Test
     void get() {
-        Targets targets = cashe.get(key);
+        Targets targets = cache.get(key);
         UntilTime untilTime = targets.getUntilTime();
         LocalDateTime timeValue = untilTime.getTimeValue();
 

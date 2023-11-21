@@ -1,13 +1,13 @@
-package nice.cashe.domain.cashe_component.repository_component;
+package nice.cache.domain.cache_component.repository_component;
 
-import static nice.cashe.domain.ApplicationConstants.DATE_PATTERN;
-import static nice.cashe.domain.ApplicationConstants.DATE_REGEX;
+import static nice.cache.domain.ApplicationConstants.DATE_PATTERN;
+import static nice.cache.domain.ApplicationConstants.DATE_REGEX;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import nice.cashe.domain.exception.InputDateInvalidException;
-import nice.cashe.domain.exception.InputEmptyException;
+import nice.cache.domain.exception.InputDateInvalidException;
+import nice.cache.domain.exception.InputEmptyException;
 
 public class UntilTime {
 
