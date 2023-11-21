@@ -13,11 +13,16 @@ public class UntilTime {
 
     private final LocalDateTime timeValue;
 
-    public UntilTime(String userTime) {
+    public UntilTime(LocalDateTime timeValue) {
+        this.timeValue = timeValue;
+        /*
+        System.out.println("입력 형식은 \"2000.04.27 21:30");
         validate(userTime);
         timeValue = createUserTime(userTime);
-    }
 
+         */
+    }
+/*
     private void validate(String userTime) {
         validateBlank(userTime);
         validRule(userTime);
@@ -36,6 +41,8 @@ public class UntilTime {
             throw new InputDateInvalidException();
         }
     }
+
+ */
 
     /**
      * 지정된 문자열 형식의 시간을 LocalDateTime 객체로 변환

@@ -32,13 +32,24 @@ public class Cache {
         }, 0, 10000); // 0초 지연, 10초 간격
     }
 
-    public Cache() {
-        logger.info("올바른 결과를 보려면 귀하의 객체에 @toString이 알맞게 재정의되어있어야합니다.");
-    }
-
     private static void removeExpiredEntries() {
         LocalDateTime now = LocalDateTime.now();
         repository.entrySet().removeIf(entry -> entry.getValue().getUntilValue().isBefore(now));
+    }
+
+    private final Value maxValue;
+
+    private Cache(int size) {
+        maxValue = initValue(size);
+        logger.info("올바른 결과를 보려면 귀하의 객체에 @toString이 알맞게 재정의되어있어야합니다.");
+    }
+
+    public static Cache from(int value) {
+        return new Cache(value);
+    }
+
+    private Value initValue(int size) {
+        return new Value(size);
     }
 
     public Targets get(String inputKey) {
@@ -47,12 +58,18 @@ public class Cache {
     }
 
     private Targets getTargets(Key key) {
-        Targets targets = Optional.ofNullable(repository.get(key))
-                .orElseThrow(InputNotExistsKeyException::new);
+        Targets targets = getTargetsByKey(key);
         UntilTime untilTime = getUntilTime(targets);
-
         printLog(targets, untilTime);
         return targets;
+    }
+
+    private Targets getTargetsByKey(Key key) {
+        return Optional.ofNullable(repository.get(key)).orElseThrow(InputNotExistsKeyException::new);
+    }
+
+    private void printLog(Targets targets, UntilTime untilTime) {
+        logger.info(targets.toString() + " 객체의 유효기간은 " + untilTime + "까지입니다.");
     }
 
     public List<Targets> getAll() {
@@ -67,29 +84,39 @@ public class Cache {
         return allTargets;
     }
 
-    private void printLog(Targets targets, UntilTime untilTime) {
-        logger.info(targets.toString() + " 객체의 유효기간은 " + untilTime + "까지입니다.");
+    public void put(String inputKey, Object... userTargets) {
+        LocalDateTime userTime = LocalDateTime.MAX;
+        initData(inputKey, userTime, userTargets);
     }
 
-    public void put(String inputKey, LocalDateTime unitTime, Object... userTargets) {
-        saveData(inputKey, userTargets);
-        // todo if(size를 초과했을 경우)
-//          Targets targets = get(inputKey);
-//        if (targets.getTargets().size() >= userTargets.length) {
-//        }
+    public void put(String inputKey, LocalDateTime userTime, Object... userTargets) {
+        initData(inputKey, userTime, userTargets);
     }
 
-    private void saveData(String inputKey, Object... userTargets) {
+    private void initData(String inputKey, LocalDateTime userTime, Object[] userTargets) {
+        if (repository.size() > maxValue.getSize()) {
+            removeStrategy();
+        }
+        saveData(inputKey, userTime, userTargets);
+    }
+    // ToDo Enum 타입에 따라 삭제전략
+    private void removeStrategy() {
+        System.out.println("전체 크기보다 키 값이 많습니다. 지울 방법을 선택하세요.");
+    }
+
+    private void saveData(String inputKey, LocalDateTime userTime, Object... userTargets) {
         // 키 생성
         Key key = initKey(inputKey);
-        // 초기화 되어있는 시간 추출
-        UntilTime untilTime = getUntilTime(repository.get(key));
+
+        // 시간 생성
+        UntilTime untilTime = createUntilTime(userTime);
+
         // 유저가 입력한 객체를 컬렉션으로 변환
         List<Target> targets = createTargets(userTargets);
-        // List<객체>와 유효 시간을 Targets으로 생성
 
+        // List<객체>와 유효 시간으로 Targets으로 생성
         Targets savedTarget = Targets.saveOf(targets, untilTime);
-        logger.info("----- 값을 삽입중...---");
+        logger.info("----- 값 삽입 중... ---");
         repository.put(key, savedTarget);
         logger.info("----- 값 삽입 끝. -----");
         printLog(savedTarget, untilTime);
@@ -100,23 +127,6 @@ public class Cache {
                 .map(Target::new)
                 .collect(Collectors.toList());
     }
-
-    // 초기화용 메서드
-//    public void put(String inputKey, String inputValue, String userInputTime) {
-//        initData(inputKey, inputValue, userInputTime);
-//    }
-
-//    private void initData(String inputKey, String inputValue, String userInputTime) {
-//        Key key = initKey(inputKey);
-//        Value value = initValue(inputValue);
-//        Targets targets = initTargets(value, userInputTime);
-//        UntilTime untilTime = getUntilTime(targets);
-//
-//        printLog(targets, untilTime);
-//        logger.info("----- 초기화 중...---");
-//        repository.put(key, targets);
-//        logger.info("----- 초기화 끝 -----");
-//    }
 
     private UntilTime getUntilTime(Targets targets) {
         return targets.getUntilTime();
@@ -129,10 +139,15 @@ public class Cache {
 
     public void remove(String userInputKey) {
         Key key = initKey(userInputKey);
-        Targets targets = repository.get(key);
+        Targets targets = getTargetsByKey(key);
         UntilTime untilTime = getUntilTime(targets);
         printLog(targets, untilTime);
-        logger.info("----- 삭제합니다 -----");
+        logger.info("----- 삭제중...---");
         repository.remove(key);
+        logger.info("----- 삭제끝 -----");
+    }
+
+    private UntilTime createUntilTime(LocalDateTime userTime) {
+        return new UntilTime(userTime);
     }
 }
