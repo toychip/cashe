@@ -15,6 +15,7 @@ import nice.cache.domain.cache_component.repository_component.Key;
 import nice.cache.domain.cache_component.repository_component.Target;
 import nice.cache.domain.cache_component.repository_component.UntilTime;
 import nice.cache.domain.exception.InputNotExistsKeyException;
+import nice.cache.domain.remove.Remove;
 
 public class Cache {
 
@@ -38,14 +39,20 @@ public class Cache {
     }
 
     private final Value maxValue;
+    private final Remove remove;
 
     private Cache(int size) {
         maxValue = initValue(size);
+        remove = initRemove();
         logger.info("올바른 결과를 보려면 귀하의 객체에 @toString이 알맞게 재정의되어있어야합니다.");
     }
 
     public static Cache from(int value) {
         return new Cache(value);
+    }
+
+    private Remove initRemove() {
+        return new Remove(repository);
     }
 
     private Value initValue(int size) {
@@ -65,7 +72,8 @@ public class Cache {
     }
 
     private Targets getTargetsByKey(Key key) {
-        return Optional.ofNullable(repository.get(key)).orElseThrow(InputNotExistsKeyException::new);
+        return Optional.ofNullable(repository.get(key))
+                .orElseThrow(InputNotExistsKeyException::new);
     }
 
     private void printLog(Targets targets, UntilTime untilTime) {
@@ -89,33 +97,25 @@ public class Cache {
         initData(inputKey, userTime, userTargets);
     }
 
-    public void put(String inputKey, LocalDateTime userTime, Object... userTargets) {
+    public void put(String inputKey, long inputUserTime, Object... userTargets) {
+        LocalDateTime userTime = LocalDateTime.now().plusSeconds(inputUserTime);
         initData(inputKey, userTime, userTargets);
     }
 
     private void initData(String inputKey, LocalDateTime userTime, Object[] userTargets) {
-        if (repository.size() > maxValue.getSize()) {
-            removeStrategy();
+        while (repository.size() > maxValue.getSize()) {
+            remove.removeStrategy();
         }
         saveData(inputKey, userTime, userTargets);
     }
-    // ToDo Enum 타입에 따라 삭제전략
-    private void removeStrategy() {
-        System.out.println("전체 크기보다 키 값이 많습니다. 지울 방법을 선택하세요.");
-    }
 
     private void saveData(String inputKey, LocalDateTime userTime, Object... userTargets) {
-        // 키 생성
+
         Key key = initKey(inputKey);
-
-        // 시간 생성
         UntilTime untilTime = createUntilTime(userTime);
-
-        // 유저가 입력한 객체를 컬렉션으로 변환
         List<Target> targets = createTargets(userTargets);
-
-        // List<객체>와 유효 시간으로 Targets으로 생성
         Targets savedTarget = Targets.saveOf(targets, untilTime);
+
         logger.info("----- 값 삽입 중... ---");
         repository.put(key, savedTarget);
         logger.info("----- 값 삽입 끝. -----");
@@ -135,7 +135,6 @@ public class Cache {
     private Key initKey(String inputKey) {
         return new Key(inputKey);
     }
-
 
     public void remove(String userInputKey) {
         Key key = initKey(userInputKey);
