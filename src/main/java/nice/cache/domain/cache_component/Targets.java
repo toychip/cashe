@@ -15,7 +15,7 @@ public class Targets {
         this.untilTime = untilTime;
     }
 
-    public static Targets saveOf(List<Target> targets, UntilTime untilTime) {
+    public static Targets of(List<Target> targets, UntilTime untilTime) {
         return new Targets(targets, untilTime);
     }
 

@@ -76,8 +76,8 @@ public class Cache {
                 .orElseThrow(InputNotExistsKeyException::new);
     }
 
-    private void printLog(Targets targets, UntilTime untilTime) {
-        logger.info(targets.toString() + " 객체의 유효기간은 " + untilTime + "까지입니다.");
+    private UntilTime getUntilTime(Targets targets) {
+        return targets.getUntilTime();
     }
 
     public List<Targets> getAll() {
@@ -92,34 +92,51 @@ public class Cache {
         return allTargets;
     }
 
-    public void put(String inputKey, Object... userTargets) {
+    public Targets put(String inputKey, Object... userTargets) {
         LocalDateTime userTime = LocalDateTime.MAX;
-        initData(inputKey, userTime, userTargets);
+        return initData(inputKey, userTime, userTargets);
     }
 
-    public void put(String inputKey, long inputUserTime, Object... userTargets) {
-        LocalDateTime userTime = LocalDateTime.now().plusSeconds(inputUserTime);
-        initData(inputKey, userTime, userTargets);
+    public Targets put(String inputKey, long inputUserTime, Object... userTargets) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime userTime = now.plusSeconds(inputUserTime);
+        return initData(inputKey, userTime, userTargets);
     }
 
-    private void initData(String inputKey, LocalDateTime userTime, Object[] userTargets) {
+    private Targets initData(String inputKey, LocalDateTime userTime, Object... userTargets) {
+        validOverFlow();
+        Key key = initKey(inputKey);
+        return judgePut(key, userTime, userTargets);
+    }
+
+    private Key initKey(String inputKey) {
+        return new Key(inputKey);
+    }
+
+    private void validOverFlow() {
         while (repository.size() > maxValue.getSize()) {
             remove.removeStrategy();
         }
-        saveData(inputKey, userTime, userTargets);
     }
 
-    private void saveData(String inputKey, LocalDateTime userTime, Object... userTargets) {
+    private Targets judgePut(Key key, LocalDateTime userTime, Object... userTargets) {
+        Targets findTargets = repository.get(key);
+        Targets savedTargets = saveData(key, userTime, userTargets);
+        if (findTargets == null) {
+            return savedTargets;
+        }
+        return findTargets;
+    }
 
-        Key key = initKey(inputKey);
+    private Targets saveData(Key key, LocalDateTime userTime, Object... userTargets) {
         UntilTime untilTime = createUntilTime(userTime);
         List<Target> targets = createTargets(userTargets);
-        Targets savedTarget = Targets.saveOf(targets, untilTime);
+        Targets savedTarget = Targets.of(targets, untilTime);
+        return saveLog(key, untilTime, savedTarget);
+    }
 
-        logger.info("----- 값 삽입 중... ---");
-        repository.put(key, savedTarget);
-        logger.info("----- 값 삽입 끝. -----");
-        printLog(savedTarget, untilTime);
+    private UntilTime createUntilTime(LocalDateTime userTime) {
+        return new UntilTime(userTime);
     }
 
     private List<Target> createTargets(Object... userTargets) {
@@ -128,25 +145,29 @@ public class Cache {
                 .collect(Collectors.toList());
     }
 
-    private UntilTime getUntilTime(Targets targets) {
-        return targets.getUntilTime();
-    }
-
-    private Key initKey(String inputKey) {
-        return new Key(inputKey);
-    }
-
     public void remove(String userInputKey) {
         Key key = initKey(userInputKey);
         Targets targets = getTargetsByKey(key);
         UntilTime untilTime = getUntilTime(targets);
+        removeLog(key, targets, untilTime);
+    }
+
+    private Targets saveLog(Key key, UntilTime untilTime, Targets savedTarget) {
+        logger.info("----- 값 삽입 중... ---");
+        repository.put(key, savedTarget);
+        logger.info("----- 값 삽입 끝. -----");
+        printLog(savedTarget, untilTime);
+        return savedTarget;
+    }
+
+    private void printLog(Targets targets, UntilTime untilTime) {
+        logger.info(targets.toString() + " 객체의 유효기간은 " + untilTime + "까지입니다.");
+    }
+
+    private void removeLog(Key key, Targets targets, UntilTime untilTime) {
         printLog(targets, untilTime);
         logger.info("----- 삭제중...---");
         repository.remove(key);
         logger.info("----- 삭제끝 -----");
-    }
-
-    private UntilTime createUntilTime(LocalDateTime userTime) {
-        return new UntilTime(userTime);
     }
 }
