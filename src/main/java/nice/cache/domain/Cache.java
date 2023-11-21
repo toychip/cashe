@@ -71,7 +71,7 @@ public class Cache {
         logger.info(targets.toString() + " 객체의 유효기간은 " + untilTime + "까지입니다.");
     }
 
-    public void put(String inputKey, Object... userTargets) {
+    public void put(String inputKey, LocalDateTime unitTime, Object... userTargets) {
         saveData(inputKey, userTargets);
         // todo if(size를 초과했을 경우)
 //          Targets targets = get(inputKey);
@@ -102,21 +102,21 @@ public class Cache {
     }
 
     // 초기화용 메서드
-    public void put(String inputKey, String inputValue, String userInputTime) {
-        initData(inputKey, inputValue, userInputTime);
-    }
+//    public void put(String inputKey, String inputValue, String userInputTime) {
+//        initData(inputKey, inputValue, userInputTime);
+//    }
 
-    private void initData(String inputKey, String inputValue, String userInputTime) {
-        Key key = initKey(inputKey);
-        Value value = initValue(inputValue);
-        Targets targets = initTargets(value, userInputTime);
-        UntilTime untilTime = getUntilTime(targets);
-
-        printLog(targets, untilTime);
-        logger.info("----- 초기화 중...---");
-        repository.put(key, targets);
-        logger.info("----- 초기화 끝 -----");
-    }
+//    private void initData(String inputKey, String inputValue, String userInputTime) {
+//        Key key = initKey(inputKey);
+//        Value value = initValue(inputValue);
+//        Targets targets = initTargets(value, userInputTime);
+//        UntilTime untilTime = getUntilTime(targets);
+//
+//        printLog(targets, untilTime);
+//        logger.info("----- 초기화 중...---");
+//        repository.put(key, targets);
+//        logger.info("----- 초기화 끝 -----");
+//    }
 
     private UntilTime getUntilTime(Targets targets) {
         return targets.getUntilTime();
@@ -126,13 +126,6 @@ public class Cache {
         return new Key(inputKey);
     }
 
-    private Value initValue(String inputValue) {
-        return new Value(inputValue);
-    }
-
-    private Targets initTargets(Value value, String userInputTime) {
-        return Targets.initOf(value, userInputTime);
-    }
 
     public void remove(String userInputKey) {
         Key key = initKey(userInputKey);
