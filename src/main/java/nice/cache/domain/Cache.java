@@ -97,7 +97,7 @@ public class Cache {
         return initData(inputKey, userTime, userTargets);
     }
 
-    public Targets put(String inputKey, long inputUserTime, Object... userTargets) {
+    public Targets putWithTime(String inputKey, long inputUserTime, Object... userTargets) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime userTime = now.plusSeconds(inputUserTime);
         return initData(inputKey, userTime, userTargets);
